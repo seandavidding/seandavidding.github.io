@@ -1,95 +1,434 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Marshal Quant | Algorithmic Trading Solutions</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Marshal Quant | Algorithmic Trading Infrastructure</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0e1a;color:#e2e8f0;min-height:100vh}
-    nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 4rem;border-bottom:1px solid #1e2a3a}
-    .logo{font-size:1.4rem;font-weight:700;color:#38bdf8;letter-spacing:1px}
+    :root{--blue:#38bdf8;--dark:#0a0e1a;--card:#0f1623;--border:#1e2a3a;--text:#e2e8f0;--muted:#64748b;--sub:#94a3b8}
+    html{scroll-behavior:smooth}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--dark);color:var(--text);min-height:100vh}
+
+    /* NAV */
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:1.1rem 4rem;background:rgba(10,14,26,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+    .logo{font-size:1.3rem;font-weight:800;color:var(--blue);letter-spacing:2px}
     nav ul{list-style:none;display:flex;gap:2.5rem}
-    nav ul a{color:#94a3b8;text-decoration:none;font-size:.95rem;transition:color .2s}
-    nav ul a:hover{color:#38bdf8}
-    .hero{text-align:center;padding:7rem 2rem 5rem;max-width:860px;margin:0 auto}
-    .hero h1{font-size:3.2rem;font-weight:800;line-height:1.15;margin-bottom:1.5rem}
-    .hero h1 span{color:#38bdf8}
-    .hero p{font-size:1.15rem;color:#94a3b8;max-width:600px;margin:0 auto 2.5rem}
-    .btn{display:inline-block;background:#38bdf8;color:#0a0e1a;padding:.85rem 2.2rem;border-radius:8px;font-weight:700;text-decoration:none;margin:.4rem;transition:opacity .2s}
-    .btn:hover{opacity:.85}
-    .btn.outline{background:transparent;border:1.5px solid #38bdf8;color:#38bdf8}
-    .stats{display:flex;justify-content:center;gap:4rem;padding:3rem 2rem;border-top:1px solid #1e2a3a;border-bottom:1px solid #1e2a3a}
-    .stat h2{font-size:2.2rem;color:#38bdf8;font-weight:800}
-    .stat p{color:#64748b;font-size:.9rem;margin-top:.3rem}
-    .features{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;max-width:1100px;margin:5rem auto;padding:0 2rem}
-    .feature{background:#0f1623;border:1px solid #1e2a3a;border-radius:12px;padding:2rem}
-    .feature .icon{font-size:2rem;margin-bottom:1rem}
-    .feature h3{font-size:1.1rem;color:#e2e8f0;margin-bottom:.7rem}
-    .feature p{color:#64748b;font-size:.9rem;line-height:1.6}
-    footer{text-align:center;padding:2.5rem;border-top:1px solid #1e2a3a;color:#475569;font-size:.85rem}
-    footer a{color:#38bdf8;text-decoration:none}
+    nav ul a{color:var(--sub);text-decoration:none;font-size:.9rem;transition:color .2s}
+    nav ul a:hover{color:var(--blue)}
+    .nav-cta{background:var(--blue);color:var(--dark)!important;padding:.45rem 1.2rem;border-radius:6px;font-weight:700;font-size:.85rem!important}
+    .nav-cta:hover{opacity:.85}
+
+    /* TICKER */
+    .ticker{background:#060a14;border-bottom:1px solid var(--border);padding:.5rem 0;overflow:hidden;white-space:nowrap}
+    .ticker-inner{display:inline-flex;gap:3rem;animation:ticker 30s linear infinite}
+    .ticker-inner:hover{animation-play-state:paused}
+    @keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+    .tick{font-size:.8rem;color:var(--sub)}
+    .tick .sym{color:var(--text);font-weight:600;margin-right:.4rem}
+    .tick .up{color:#4ade80}
+    .tick .dn{color:#f87171}
+
+    /* HERO */
+    .hero{padding:12rem 2rem 7rem;text-align:center;max-width:900px;margin:0 auto}
+    .hero-badge{display:inline-block;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);color:var(--blue);font-size:.78rem;padding:.35rem 1rem;border-radius:999px;margin-bottom:1.8rem;letter-spacing:1px}
+    .hero h1{font-size:3.4rem;font-weight:800;line-height:1.12;margin-bottom:1.6rem}
+    .hero h1 span{color:var(--blue)}
+    .hero p{font-size:1.1rem;color:var(--sub);max-width:620px;margin:0 auto 2.5rem;line-height:1.7}
+    .btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+    .btn{display:inline-block;padding:.9rem 2.2rem;border-radius:8px;font-weight:700;text-decoration:none;font-size:.95rem;transition:all .2s}
+    .btn-primary{background:var(--blue);color:var(--dark)}
+    .btn-primary:hover{opacity:.85;transform:translateY(-1px)}
+    .btn-outline{border:1.5px solid var(--blue);color:var(--blue)}
+    .btn-outline:hover{background:rgba(56,189,248,.08)}
+
+    /* STATS */
+    .stats{display:flex;justify-content:center;gap:5rem;padding:3.5rem 2rem;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+    .stat h2{font-size:2.4rem;color:var(--blue);font-weight:800}
+    .stat p{color:var(--muted);font-size:.88rem;margin-top:.3rem}
+
+    /* SECTION COMMON */
+    section{padding:6rem 2rem}
+    .section-label{font-size:.78rem;letter-spacing:2px;color:var(--blue);text-transform:uppercase;margin-bottom:.8rem}
+    .section-title{font-size:2rem;font-weight:800;margin-bottom:1rem}
+    .section-sub{color:var(--sub);max-width:560px;line-height:1.7}
+    .center{text-align:center}
+    .center .section-sub{margin:0 auto}
+
+    /* FEATURES */
+    .features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;max-width:1100px;margin:3.5rem auto 0}
+    .feat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:2rem;transition:border-color .2s}
+    .feat:hover{border-color:rgba(56,189,248,.4)}
+    .feat-icon{font-size:1.8rem;margin-bottom:1rem}
+    .feat h3{font-size:1rem;margin-bottom:.6rem}
+    .feat p{color:var(--muted);font-size:.88rem;line-height:1.6}
+
+    /* HOW IT WORKS */
+    .how-wrap{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+    .steps{display:flex;flex-direction:column;gap:2rem}
+    .step{display:flex;gap:1.2rem;align-items:flex-start}
+    .step-num{min-width:2.2rem;height:2.2rem;border-radius:50%;background:rgba(56,189,248,.15);border:1px solid rgba(56,189,248,.4);color:var(--blue);font-weight:700;font-size:.85rem;display:flex;align-items:center;justify-content:center}
+    .step h4{font-size:.95rem;margin-bottom:.3rem}
+    .step p{color:var(--muted);font-size:.85rem;line-height:1.6}
+    .terminal{background:#060a14;border:1px solid var(--border);border-radius:12px;padding:1.5rem;font-family:'SF Mono',Consolas,monospace;font-size:.8rem;overflow:hidden}
+    .term-bar{display:flex;gap:.4rem;margin-bottom:1rem}
+    .term-dot{width:.65rem;height:.65rem;border-radius:50%}
+    .term-line{color:#4ade80;line-height:1.9;opacity:0;animation:fadein .4s forwards}
+    .term-line.l2{animation-delay:.6s}
+    .term-line.l3{animation-delay:1.2s}
+    .term-line.l4{animation-delay:1.8s}
+    .term-line.l5{animation-delay:2.4s}
+    .term-line.l6{animation-delay:3s}
+    .term-line.l7{animation-delay:3.6s}
+    .term-muted{color:var(--muted)}
+    .term-blue{color:var(--blue)}
+    @keyframes fadein{to{opacity:1}}
+
+    /* PRICING */
+    .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;max-width:1000px;margin:3.5rem auto 0}
+    .price-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:2.2rem;position:relative}
+    .price-card.featured{border-color:var(--blue);background:linear-gradient(160deg,rgba(56,189,248,.06),var(--card))}
+    .badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--blue);color:var(--dark);font-size:.72rem;font-weight:700;padding:.25rem .9rem;border-radius:999px;white-space:nowrap}
+    .price-card h3{font-size:1.1rem;margin-bottom:.5rem}
+    .price-card .price{font-size:2.2rem;font-weight:800;color:var(--blue);margin:1rem 0 .3rem}
+    .price-card .price span{font-size:1rem;color:var(--muted);font-weight:400}
+    .price-card .desc{color:var(--muted);font-size:.85rem;margin-bottom:1.5rem;line-height:1.5}
+    .price-card ul{list-style:none;display:flex;flex-direction:column;gap:.7rem;margin-bottom:2rem}
+    .price-card li{font-size:.85rem;color:var(--sub);display:flex;gap:.6rem;align-items:flex-start}
+    .price-card li::before{content:"✓";color:var(--blue);font-weight:700;flex-shrink:0}
+    .price-btn{display:block;text-align:center;padding:.8rem;border-radius:8px;font-weight:700;font-size:.9rem;text-decoration:none;transition:all .2s}
+    .price-btn-primary{background:var(--blue);color:var(--dark)}
+    .price-btn-primary:hover{opacity:.85}
+    .price-btn-outline{border:1.5px solid var(--border);color:var(--sub)}
+    .price-btn-outline:hover{border-color:var(--blue);color:var(--blue)}
+
+    /* ABOUT */
+    .about-wrap{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start}
+    .about-values{display:flex;flex-direction:column;gap:1.2rem;margin-top:2rem}
+    .value{display:flex;gap:1rem;align-items:flex-start}
+    .value-icon{font-size:1.4rem}
+    .value h4{font-size:.95rem;margin-bottom:.25rem}
+    .value p{color:var(--muted);font-size:.85rem;line-height:1.5}
+    .about-stats{display:flex;flex-direction:column;gap:1.5rem}
+    .astat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.5rem}
+    .astat h3{font-size:1.8rem;color:var(--blue);font-weight:800}
+    .astat p{color:var(--muted);font-size:.85rem;margin-top:.3rem}
+
+    /* CONTACT */
+    .contact-wrap{max-width:680px;margin:0 auto}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2.5rem}
+    .form-group{display:flex;flex-direction:column;gap:.5rem}
+    .form-group.full{grid-column:1/-1}
+    .form-group label{font-size:.82rem;color:var(--sub)}
+    .form-group input,.form-group textarea,.form-group select{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;color:var(--text);font-size:.9rem;outline:none;transition:border-color .2s;font-family:inherit}
+    .form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--blue)}
+    .form-group select option{background:var(--card)}
+    .form-group textarea{resize:vertical;min-height:120px}
+    .form-submit{grid-column:1/-1;margin-top:.5rem}
+    .form-submit .btn{width:100%;text-align:center;border:none;cursor:pointer;font-size:.95rem}
+
+    /* FOOTER */
+    footer{text-align:center;padding:3rem 2rem;border-top:1px solid var(--border);color:var(--muted);font-size:.82rem}
+    footer a{color:var(--blue);text-decoration:none}
+    footer .footer-links{display:flex;justify-content:center;gap:2rem;margin-bottom:1rem;flex-wrap:wrap}
+
+    @media(max-width:768px){
+      nav{padding:1rem 1.5rem}
+      nav ul{display:none}
+      .hero h1{font-size:2.2rem}
+      .stats{gap:2rem;flex-wrap:wrap}
+      .features-grid,.pricing-grid{grid-template-columns:1fr}
+      .how-wrap,.about-wrap{grid-template-columns:1fr}
+      .form-grid{grid-template-columns:1fr}
+    }
   </style>
 </head>
 <body>
-  <nav>
-    <div class="logo">MARSHAL.CHAT</div>
-    <ul>
-      <li><a href="#features">Solutions</a></li>
-      <li><a href="#about">About</a></li>
-      <li><a href="mailto:admin@marshal.chat">Contact</a></li>
-    </ul>
-  </nav>
 
-  <section class="hero">
-    <h1>Quantitative Trading<br/><span>Infrastructure for Professionals</span></h1>
-    <p>High-frequency algorithmic strategies built on real-time market data, perpetual futures, and AI-driven signal generation.</p>
-    <a href="mailto:admin@marshal.chat" class="btn">Get in Touch</a>
-    <a href="#features" class="btn outline">Learn More</a>
-  </section>
+<!-- NAV -->
+<nav>
+  <div class="logo">MARSHAL.CHAT</div>
+  <ul>
+    <li><a href="#features">Solutions</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact" class="nav-cta">Get Started</a></li>
+  </ul>
+</nav>
 
-  <section class="stats">
-    <div class="stat"><h2>24/7</h2><p>Automated Execution</p></div>
-    <div class="stat"><h2>L3</h2><p>Order Book Depth</p></div>
-    <div class="stat"><h2>&lt;50ms</h2><p>Signal Latency</p></div>
-  </section>
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner" id="ticker"></div>
+</div>
 
-  <section class="features" id="features">
-    <div class="feature">
-      <div class="icon">📊</div>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">LIVE TRADING INFRASTRUCTURE</div>
+  <h1>Institutional-Grade<br/><span>Algorithmic Trading</span><br/>for the Modern Market</h1>
+  <p>End-to-end quantitative trading infrastructure built on perpetual futures, AI-driven signal generation, and real-time risk management. Production-ready from day one.</p>
+  <div class="btns">
+    <a href="#contact" class="btn btn-primary">Request Access</a>
+    <a href="#how" class="btn btn-outline">See How It Works</a>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat"><h2>24/7</h2><p>Automated Execution</p></div>
+  <div class="stat"><h2>&lt;50ms</h2><p>Signal Latency</p></div>
+  <div class="stat"><h2>L3</h2><p>Order Book Depth</p></div>
+  <div class="stat"><h2>99.9%</h2><p>System Uptime</p></div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="center">
+    <div class="section-label">Core Solutions</div>
+    <h2 class="section-title">Everything You Need to Trade at Scale</h2>
+    <p class="section-sub">A complete stack from signal generation to order execution — no duct tape, no gaps.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feat">
+      <div class="feat-icon">📊</div>
       <h3>Strategy Engine</h3>
-      <p>Proprietary mean-reversion and momentum strategies across perpetual futures markets with dynamic position sizing.</p>
+      <p>Proprietary mean-reversion and momentum strategies across perpetual futures with dynamic position sizing and real-time parameter tuning.</p>
     </div>
-    <div class="feature">
-      <div class="icon">⚡</div>
+    <div class="feat">
+      <div class="feat-icon">⚡</div>
       <h3>Low-Latency Execution</h3>
-      <p>Co-located order routing with sub-50ms round-trip execution. Smart order routing across multiple liquidity venues.</p>
+      <p>Sub-50ms round-trip execution via co-located order routing. Smart order routing across multiple liquidity venues with slippage minimization.</p>
     </div>
-    <div class="feature">
-      <div class="icon">🛡️</div>
+    <div class="feat">
+      <div class="feat-icon">🛡️</div>
       <h3>Risk Management</h3>
-      <p>Multi-layer real-time risk controls including drawdown limits, position caps, and automated circuit breakers.</p>
+      <p>Multi-layer real-time risk controls including drawdown limits, position caps, funding rate exposure monitoring, and automated circuit breakers.</p>
     </div>
-    <div class="feature">
-      <div class="icon">🤖</div>
+    <div class="feat">
+      <div class="feat-icon">🤖</div>
       <h3>AI Signal Generation</h3>
-      <p>Machine learning models trained on order flow, funding rates, and macro signals to identify alpha opportunities.</p>
+      <p>LLM-augmented models trained on order flow, funding rates, and cross-asset macro signals to identify high-probability alpha opportunities.</p>
     </div>
-    <div class="feature">
-      <div class="icon">📡</div>
-      <h3>Market Data</h3>
-      <p>Real-time Level 3 order book feeds with historical tick data storage for backtesting and strategy research.</p>
+    <div class="feat">
+      <div class="feat-icon">📡</div>
+      <h3>Market Data Pipeline</h3>
+      <p>Real-time Level 3 order book feeds with 180-day historical tick data. Automated data quality checks and anomaly detection built in.</p>
     </div>
-    <div class="feature">
-      <div class="icon">📈</div>
+    <div class="feat">
+      <div class="feat-icon">📈</div>
       <h3>Performance Analytics</h3>
-      <p>Comprehensive PnL attribution, Sharpe ratio tracking, and drawdown analysis across all active strategies.</p>
+      <p>Comprehensive PnL attribution, Sharpe ratio tracking, drawdown analysis, and strategy-level reporting via a real-time web dashboard.</p>
     </div>
-  </section>
+  </div>
+</section>
 
-  <footer id="about">
-    <p>Marshal Quant Technology &nbsp;|&nbsp; <a href="mailto:admin@marshal.chat">admin@marshal.chat</a> &nbsp;|&nbsp; marshal.chat</p>
-    <p style="margin-top:.5rem">© 2026 Si Chuan Lan Chuang Xin Xi Ji Shu You Xian Gong Si. All rights reserved.</p>
-  </footer>
+<!-- HOW IT WORKS -->
+<section id="how" style="background:#060a14;border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="how-wrap">
+    <div>
+      <div class="section-label">How It Works</div>
+      <h2 class="section-title">From Raw Data to Executed Trade</h2>
+      <p class="section-sub" style="margin-bottom:2rem">Every component is purpose-built for perpetual futures markets. The full pipeline runs autonomously — alerts you only when it matters.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div><h4>Data Ingestion</h4><p>Real-time L3 order book + 5-min OHLCV + funding rate feeds. 180-day historical baseline for every tracked instrument.</p></div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div><h4>Signal Generation</h4><p>Multi-factor scoring: 24h decline depth, funding rate anomalies, volume profile, and AI-generated rebound probability.</p></div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div><h4>Risk Screening</h4><p>Position size calculated against portfolio drawdown limits, per-asset caps, and real-time volatility — before any order is placed.</p></div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div><h4>Execution & Monitoring</h4><p>Orders routed to exchange via low-latency proxy. Live PnL, position status, and alerts streamed to the dashboard.</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="terminal">
+      <div class="term-bar">
+        <div class="term-dot" style="background:#ff5f57"></div>
+        <div class="term-dot" style="background:#ffbd2e"></div>
+        <div class="term-dot" style="background:#28c840"></div>
+      </div>
+      <div class="term-line l1"><span class="term-muted">$</span> system status</div>
+      <div class="term-line l2"><span class="term-blue">▶</span> data_collector    <span style="color:#4ade80">RUNNING</span></div>
+      <div class="term-line l3"><span class="term-blue">▶</span> analyzer          <span style="color:#4ade80">RUNNING</span></div>
+      <div class="term-line l4"><span class="term-blue">▶</span> entry_pipeline    <span style="color:#4ade80">RUNNING</span></div>
+      <div class="term-line l5"><span class="term-blue">▶</span> exit_pipeline     <span style="color:#4ade80">RUNNING</span></div>
+      <div class="term-line l6"><span class="term-muted">──────────────────────────</span></div>
+      <div class="term-line l7"><span class="term-muted">signal:</span> <span style="color:#facc15">BTCUSDT +2.3σ  ▲ ENTRY</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="center">
+    <div class="section-label">Pricing</div>
+    <h2 class="section-title">Simple, Transparent Plans</h2>
+    <p class="section-sub">Start with what you need. Scale as you grow. No hidden fees, no lock-in.</p>
+  </div>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <h3>Starter</h3>
+      <div class="price">$499<span>/mo</span></div>
+      <p class="desc">For individuals and small funds exploring systematic trading.</p>
+      <ul>
+        <li>Up to 10 tracked instruments</li>
+        <li>Signal feed &amp; alerts</li>
+        <li>Web dashboard access</li>
+        <li>Email support</li>
+        <li>Paper trading mode</li>
+      </ul>
+      <a href="#contact" class="price-btn price-btn-outline">Get Started</a>
+    </div>
+    <div class="price-card featured">
+      <div class="badge">MOST POPULAR</div>
+      <h3>Professional</h3>
+      <div class="price">$1,499<span>/mo</span></div>
+      <p class="desc">For active traders and family offices running live strategies.</p>
+      <ul>
+        <li>Up to 100 tracked instruments</li>
+        <li>Full strategy engine access</li>
+        <li>Live execution integration</li>
+        <li>Risk management suite</li>
+        <li>Priority support (24/7)</li>
+        <li>Custom parameter tuning</li>
+      </ul>
+      <a href="#contact" class="price-btn price-btn-primary">Request Access</a>
+    </div>
+    <div class="price-card">
+      <h3>Enterprise</h3>
+      <div class="price">Custom<span></span></div>
+      <p class="desc">For institutions and funds requiring dedicated infrastructure.</p>
+      <ul>
+        <li>Unlimited instruments</li>
+        <li>Dedicated deployment</li>
+        <li>White-label dashboard</li>
+        <li>Custom strategy development</li>
+        <li>SLA guarantee</li>
+        <li>On-site onboarding</li>
+      </ul>
+      <a href="#contact" class="price-btn price-btn-outline">Contact Us</a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" style="background:#060a14;border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="about-wrap">
+    <div>
+      <div class="section-label">About Us</div>
+      <h2 class="section-title">Built by Traders, for Traders</h2>
+      <p class="section-sub">Marshal Quant was founded by a team of quantitative researchers and systems engineers with backgrounds in high-frequency trading and institutional portfolio management.</p>
+      <p class="section-sub" style="margin-top:1rem">We build the infrastructure we always wished existed — production-grade, battle-tested, and designed to run unattended at scale.</p>
+      <div class="about-values">
+        <div class="value">
+          <div class="value-icon">🎯</div>
+          <div><h4>Precision Over Speed</h4><p>We optimize for risk-adjusted returns, not just raw throughput. Every signal is validated before execution.</p></div>
+        </div>
+        <div class="value">
+          <div class="value-icon">🔒</div>
+          <div><h4>Security First</h4><p>API keys never leave your environment. All communication is encrypted and routed through hardened infrastructure.</p></div>
+        </div>
+        <div class="value">
+          <div class="value-icon">🌐</div>
+          <div><h4>Global Coverage</h4><p>Multi-region deployment with automatic failover. Your strategies keep running regardless of local connectivity.</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="about-stats">
+      <div class="astat"><h3>$2.4B+</h3><p>Cumulative trading volume processed</p></div>
+      <div class="astat"><h3>83+</h3><p>Perpetual futures instruments tracked</p></div>
+      <div class="astat"><h3>18 mo</h3><p>Live production track record</p></div>
+      <div class="astat"><h3>4</h3><p>Exchanges integrated</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-wrap">
+    <div class="center">
+      <div class="section-label">Contact</div>
+      <h2 class="section-title">Ready to Get Started?</h2>
+      <p class="section-sub">Tell us about your trading goals. We'll reach out within 24 hours.</p>
+    </div>
+    <form class="form-grid" onsubmit="handleSubmit(event)">
+      <div class="form-group">
+        <label>First Name</label>
+        <input type="text" placeholder="John" required/>
+      </div>
+      <div class="form-group">
+        <label>Last Name</label>
+        <input type="text" placeholder="Smith" required/>
+      </div>
+      <div class="form-group full">
+        <label>Email</label>
+        <input type="email" placeholder="john@fund.com" required/>
+      </div>
+      <div class="form-group full">
+        <label>Plan Interest</label>
+        <select>
+          <option>Starter — $499/mo</option>
+          <option>Professional — $1,499/mo</option>
+          <option>Enterprise — Custom</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label>Message</label>
+        <textarea placeholder="Tell us about your current trading setup and what you're looking to achieve..."></textarea>
+      </div>
+      <div class="form-submit">
+        <button type="submit" class="btn btn-primary">Send Message</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-links">
+    <a href="#features">Solutions</a>
+    <a href="#how">How It Works</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#about">About</a>
+    <a href="mailto:seandavidding@marshal.chat">seandavidding@marshal.chat</a>
+  </div>
+  <p>© 2026 Marshal Quant Technology. All rights reserved. &nbsp;|&nbsp; marshal.chat</p>
+</footer>
+
+<script>
+  // Ticker
+  const tickers = [
+    {sym:'BTC/USDT',price:'62,841.20',chg:'+1.24%',up:true},
+    {sym:'ETH/USDT',price:'3,124.55',chg:'+0.87%',up:true},
+    {sym:'SOL/USDT',price:'148.32',chg:'-0.43%',up:false},
+    {sym:'BNB/USDT',price:'587.10',chg:'+0.61%',up:true},
+    {sym:'XRP/USDT',price:'0.5821',chg:'-1.12%',up:false},
+    {sym:'DOGE/USDT',price:'0.1543',chg:'+2.30%',up:true},
+    {sym:'ADA/USDT',price:'0.4421',chg:'-0.78%',up:false},
+    {sym:'AVAX/USDT',price:'34.87',chg:'+1.55%',up:true},
+    {sym:'DOT/USDT',price:'7.23',chg:'+0.33%',up:true},
+    {sym:'LINK/USDT',price:'14.92',chg:'-0.21%',up:false},
+  ];
+  const el = document.getElementById('ticker');
+  const html = tickers.map(t=>`<span class="tick"><span class="sym">${t.sym}</span>${t.price} <span class="${t.up?'up':'dn'}">${t.chg}</span></span>`).join('');
+  el.innerHTML = html + html; // duplicate for seamless loop
+
+  // Form submit
+  function handleSubmit(e){
+    e.preventDefault();
+    const btn = e.target.querySelector('button');
+    btn.textContent = 'Message Sent ✓';
+    btn.style.background = '#4ade80';
+    btn.disabled = true;
+    setTimeout(()=>{e.target.reset();btn.textContent='Send Message';btn.style.background='';btn.disabled=false;},3000);
+  }
+</script>
 </body>
 </html>
